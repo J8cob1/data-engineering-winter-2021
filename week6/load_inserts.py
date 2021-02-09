@@ -25,13 +25,13 @@ def row2vals(row):
 	# Handle changing cencus tract keys
 	census = ""
 	if Year == 2015:
-		cencus = "CensusTract"
+		census = "CensusTract"
 	else:
-		cencus = "TractId"
+		census = "TractId"
 
 	ret = f"""
        {Year},                          -- Year
-       {row['CensusTract']},            -- CensusTract
+       {row[census]},                   -- CensusTract
        '{row['State']}',                -- State
        '{row['County']}',               -- County
        {row['TotalPop']},               -- TotalPop
