@@ -24,6 +24,7 @@ def row2vals(row):
 
 	# Handle changing cencus tract keys
 	census = ""
+	citizen = ""
 	if Year == 2015:
 		census = "CensusTract"
 		citizen = "Citizen"
