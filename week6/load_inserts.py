@@ -26,8 +26,10 @@ def row2vals(row):
 	census = ""
 	if Year == 2015:
 		census = "CensusTract"
+		citizen = "Citizen"
 	else:
 		census = "TractId"
+		citizen = "VotingAgeCitizen"
 
 	ret = f"""
        {Year},                          -- Year
@@ -43,7 +45,7 @@ def row2vals(row):
        {row['Native']},                 -- Native
        {row['Asian']},                  -- Asian
        {row['Pacific']},                -- Pacific
-       {row['Citizen']},                -- Citizen
+       {row[citizen]},                  -- Citizen
        {row['Income']},                 -- Income
        {row['IncomeErr']},              -- IncomeErr
        {row['IncomePerCap']},           -- IncomePerCap
