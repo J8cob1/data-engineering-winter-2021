@@ -190,6 +190,8 @@ def load(conn, icmdlist):
             # print (cmd)
             cursor.execute(cmd)
 
+        createPrimaryKeyAndIndex(conn)
+
         elapsed = time.perf_counter() - start
         print(f'Finished Loading. Elapsed Time: {elapsed:0.4} seconds')
 
@@ -204,7 +206,6 @@ def main():
         createTable(conn)
 
     load(conn, cmdlist)
-    createPrimaryKeyAndIndex(conn)
 
 
 if __name__ == "__main__":
