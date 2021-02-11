@@ -23,15 +23,8 @@ def row2vals(row):
         row['County'] = row['County'].replace('\'','')  # eliminate quotes within literals
 
     # Handle changing cencus tract keys
-    census = ""
-    citizen = ""
-    if Year == 2015:
-        census = "CensusTract"
-        citizen = "Citizen"
-    else:
-        census = "TractId"
-        citizen = "VotingAgeCitizen"
-    print(census)
+    census = "CensusTract"
+    citizen = "Citizen"
 
     ret = f"""
        {Year},                          -- Year
