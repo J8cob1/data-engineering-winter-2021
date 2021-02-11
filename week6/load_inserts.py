@@ -16,24 +16,24 @@ CreateDB = False  # indicates whether the DB table should be (re)-created
 Year = 2015
 
 def row2vals(row):
-	# handle the null vals
-	for key in row:
-		if not row[key]:
-			row[key] = 0
-		row['County'] = row['County'].replace('\'','')  # eliminate quotes within literals
+    # handle the null vals
+    for key in row:
+        if not row[key]:
+            row[key] = 0
+        row['County'] = row['County'].replace('\'','')  # eliminate quotes within literals
 
-	# Handle changing cencus tract keys
-	census = ""
-	citizen = ""
-	if Year == 2015:
-		print("2015")
-		census = "CensusTract"
-		citizen = "Citizen"
-	else:
-		census = "TractId"
-		citizen = "VotingAgeCitizen"
+    # Handle changing cencus tract keys
+    census = ""
+    citizen = ""
+    if Year == 2015:
+        census = "CensusTract"
+        citizen = "Citizen"
+    else:
+        census = "TractId"
+        citizen = "VotingAgeCitizen"
+    print(census)
 
-	ret = f"""
+    ret = f"""
        {Year},                          -- Year
        {row[census]},                   -- CensusTract
        '{row['State']}',                -- State
@@ -72,8 +72,8 @@ def row2vals(row):
        {row['SelfEmployed']},           -- SelfEmployed
        {row['FamilyWork']},             -- FamilyWork
        {row['Unemployment']}            -- Unemployment
-	"""
-	return ret
+    """
+    return ret
 
 
 def initialize():
@@ -94,111 +94,111 @@ def initialize():
 # read the input data file into a list of row strings
 # skip the header row
 def readdata(fname):
-	print(f"readdata: reading from File: {fname}")
-	with open(fname, mode="r") as fil:
-		dr = csv.DictReader(fil)
-		headerRow = next(dr)
-		# print(f"Header: {headerRow}")
+    print(f"readdata: reading from File: {fname}")
+    with open(fname, mode="r") as fil:
+        dr = csv.DictReader(fil)
+        headerRow = next(dr)
+        # print(f"Header: {headerRow}")
 
-		rowlist = []
-		for row in dr:
-			rowlist.append(row)
+        rowlist = []
+        for row in dr:
+            rowlist.append(row)
 
-	return rowlist
+    return rowlist
 
 # convert list of data rows into list of SQL 'INSERT INTO ...' commands
 def getSQLcmnds(rowlist):
-	cmdlist = []
-	for row in rowlist:
-		valstr = row2vals(row)
-		cmd = f"INSERT INTO {TableName} VALUES ({valstr});"
-		cmdlist.append(cmd)
-	return cmdlist
+    cmdlist = []
+    for row in rowlist:
+        valstr = row2vals(row)
+        cmd = f"INSERT INTO {TableName} VALUES ({valstr});"
+        cmdlist.append(cmd)
+    return cmdlist
 
 # connect to the database
 def dbconnect():
-	connection = psycopg2.connect(
+    connection = psycopg2.connect(
         host="localhost",
         database=DBname,
         user=DBuser,
         password=DBpwd,
-	)
-	connection.autocommit = True
-	return connection
+    )
+    connection.autocommit = True
+    return connection
 
 # create the target table 
 # assumes that conn is a valid, open connection to a Postgres database
 def createTable(conn):
 
-	with conn.cursor() as cursor:
-		cursor.execute(f"""
-        	DROP TABLE IF EXISTS {TableName};
-        	CREATE TABLE {TableName} (
-            	Year                INTEGER,
+    with conn.cursor() as cursor:
+        cursor.execute(f"""
+            DROP TABLE IF EXISTS {TableName};
+            CREATE TABLE {TableName} (
+                Year                INTEGER,
               CensusTract         NUMERIC,
-            	State               TEXT,
-            	County              TEXT,
-            	TotalPop            INTEGER,
-            	Men                 INTEGER,
-            	Women               INTEGER,
-            	Hispanic            DECIMAL,
-            	White               DECIMAL,
-            	Black               DECIMAL,
-            	Native              DECIMAL,
-            	Asian               DECIMAL,
-            	Pacific             DECIMAL,
-            	Citizen             DECIMAL,
-            	Income              DECIMAL,
-            	IncomeErr           DECIMAL,
-            	IncomePerCap        DECIMAL,
-            	IncomePerCapErr     DECIMAL,
-            	Poverty             DECIMAL,
-            	ChildPoverty        DECIMAL,
-            	Professional        DECIMAL,
-            	Service             DECIMAL,
-            	Office              DECIMAL,
-            	Construction        DECIMAL,
-            	Production          DECIMAL,
-            	Drive               DECIMAL,
-            	Carpool             DECIMAL,
-            	Transit             DECIMAL,
-            	Walk                DECIMAL,
-            	OtherTransp         DECIMAL,
-            	WorkAtHome          DECIMAL,
-            	MeanCommute         DECIMAL,
-            	Employed            INTEGER,
-            	PrivateWork         DECIMAL,
-            	PublicWork          DECIMAL,
-            	SelfEmployed        DECIMAL,
-            	FamilyWork          DECIMAL,
-            	Unemployment        DECIMAL
-         	);
-    	""")
+                State               TEXT,
+                County              TEXT,
+                TotalPop            INTEGER,
+                Men                 INTEGER,
+                Women               INTEGER,
+                Hispanic            DECIMAL,
+                White               DECIMAL,
+                Black               DECIMAL,
+                Native              DECIMAL,
+                Asian               DECIMAL,
+                Pacific             DECIMAL,
+                Citizen             DECIMAL,
+                Income              DECIMAL,
+                IncomeErr           DECIMAL,
+                IncomePerCap        DECIMAL,
+                IncomePerCapErr     DECIMAL,
+                Poverty             DECIMAL,
+                ChildPoverty        DECIMAL,
+                Professional        DECIMAL,
+                Service             DECIMAL,
+                Office              DECIMAL,
+                Construction        DECIMAL,
+                Production          DECIMAL,
+                Drive               DECIMAL,
+                Carpool             DECIMAL,
+                Transit             DECIMAL,
+                Walk                DECIMAL,
+                OtherTransp         DECIMAL,
+                WorkAtHome          DECIMAL,
+                MeanCommute         DECIMAL,
+                Employed            INTEGER,
+                PrivateWork         DECIMAL,
+                PublicWork          DECIMAL,
+                SelfEmployed        DECIMAL,
+                FamilyWork          DECIMAL,
+                Unemployment        DECIMAL
+             );
+        """)
 
-		print(f"Created {TableName}")
+        print(f"Created {TableName}")
 
 def createPrimaryKeyAndIndex(conn):
 
-	with conn.cursor() as cursor:
-		cursor.execute(f"""
-			ALTER TABLE {TableName} ADD PRIMARY KEY (Year, CensusTract);
-        	CREATE INDEX idx_{TableName}_State ON {TableName}(State);
-    	""")
+    with conn.cursor() as cursor:
+        cursor.execute(f"""
+            ALTER TABLE {TableName} ADD PRIMARY KEY (Year, CensusTract);
+            CREATE INDEX idx_{TableName}_State ON {TableName}(State);
+        """)
 
-		print(f"Primary key and index created for {TableName}")
+        print(f"Primary key and index created for {TableName}")
 
 def load(conn, icmdlist):
 
-	with conn.cursor() as cursor:
-		print(f"Loading {len(icmdlist)} rows")
-		start = time.perf_counter()
+    with conn.cursor() as cursor:
+        print(f"Loading {len(icmdlist)} rows")
+        start = time.perf_counter()
     
-		for cmd in icmdlist:
-			# print (cmd)
-			cursor.execute(cmd)
+        for cmd in icmdlist:
+            # print (cmd)
+            cursor.execute(cmd)
 
-		elapsed = time.perf_counter() - start
-		print(f'Finished Loading. Elapsed Time: {elapsed:0.4} seconds')
+        elapsed = time.perf_counter() - start
+        print(f'Finished Loading. Elapsed Time: {elapsed:0.4} seconds')
 
 
 def main():
@@ -208,7 +208,7 @@ def main():
     cmdlist = getSQLcmnds(rlis)
 
     if CreateDB:
-    	createTable(conn)
+        createTable(conn)
 
     load(conn, cmdlist)
     createPrimaryKeyAndIndex(conn)
