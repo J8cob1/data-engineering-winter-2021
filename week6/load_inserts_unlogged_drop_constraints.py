@@ -116,7 +116,7 @@ def dbconnect():
         user=DBuser,
         password=DBpwd,
     )
-    connection.autocommit = True
+    connection.autocommit = False
     return connection
 
 # create the target table 
@@ -268,7 +268,7 @@ def main():
 
     # Load entries into non-logged table, the move them over to the logged table
     load(conn, cmdlist)
-
+    conn.commit()
 
 if __name__ == "__main__":
     main()
